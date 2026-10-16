@@ -118,6 +118,13 @@ arbitrary application languages.
   tooling in `/scripts`. Bootstrap adds
   actual application ecosystems/directories and lockfiles. Dependabot/fork PRs
   run the same secret-free CI and are manually reviewed/merged.
+  Enable Dependabot security updates separately to receive security-fix PRs;
+  the scheduled version-update configuration does not enable that setting.
+  With dependency review enabled, `Dependency policy` rejects introduced
+  vulnerabilities at every severity, including low, in all dependency scopes.
+  Make it a required GitHub Actions check on the default branch, without
+  bypass actors, after observing its emitted name on a PR. See
+  [dependency policy](dependency-policy.md#administration-and-evidence).
 - Enable private vulnerability reporting or configure a private contact route.
 - `.github/CODEOWNERS.example` is inert. Copy it to `CODEOWNERS` only after
   replacing placeholders with actual users/teams and checking team access.

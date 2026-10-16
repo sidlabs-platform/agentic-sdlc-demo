@@ -18,6 +18,12 @@ Changes must update all consumers and tests together.
   exactly `true` or `false`; unset or other values fail policy validation.
   False requires the corresponding `docs/dependency-policy.md` or
   `docs/code-scanning-policy.md` alternative, not silent gate removal.
+- Enabled dependency review rejects introduced vulnerabilities at low severity
+  and above in runtime, development and unknown dependency scopes. The stable
+  `Dependency policy` check must be required by active default-branch rules;
+  workflow configuration and Dependabot updates alone do not enforce merging.
+  The existing full template Python advisory audit remains an additional
+  moderate-or-higher baseline safeguard.
 - Assignment uses `copilot-swe-agent[bot]` with
   `agent_assignment.custom_agent`. Agent identities are filenames without
   `.agent.md`; no fixed branches or textual agent-mention dispatch.

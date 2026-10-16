@@ -3,7 +3,11 @@
 Set repository variable `SDLC_REQUIRE_DEPENDENCY_REVIEW` to exact `true` or
 `false`. Unset, misspelled or other values fail policy validation. Prefer
 `true` when the repository is entitled: PR dependency review must complete
-successfully under the configured vulnerability policy.
+successfully. Dependency review rejects newly introduced vulnerable dependencies
+at **low, moderate, high, or critical** severity, across runtime, development
+and unknown scopes. It compares the PR base and head dependency graphs; it is
+not a full scan of unchanged dependencies. Vulnerability checks are enabled
+and warn-only mode is disabled.
 
 When it is `false`, this policy is required and describes the baseline
 alternative; absence of entitlement is not a clean vulnerability scan.
@@ -65,6 +69,27 @@ Required **`Application checks`** runs actual app security/advisory commands on
 the selected application runner. Look there for application execution evidence.
 
 ## Administration and evidence
+
+Dependabot version-update PRs come from `.github/dependabot.yml`; automatic
+security-fix PRs additionally require Dependabot alerts and security updates
+enabled in repository settings. Neither creates a merge gate by itself.
+
+For this repository, retain `SDLC_REQUIRE_DEPENDENCY_REVIEW=true` and require
+the observed **`Dependency policy`** GitHub Actions check in an **active**
+ruleset targeting `~DEFAULT_BRANCH`, with no bypass actors. Require PRs so a
+direct push cannot bypass PR dependency review. Preserve existing review and
+security rules. The workflow intentionally has no PR branch or path filters,
+so documentation-only and Dependabot PRs also emit the required check.
+Do not enable a rule until its check identity has been observed on a real PR.
+Workflow edits must be delivered to GitHub; local changes do not tighten the
+live check's threshold. Verify the live rule and resulting PR check separately.
+
+Coverage depends on GitHub's supported ecosystems and discovered manifests,
+lockfiles and submitted dependency snapshots. Undeclared, vendored or
+unsupported dependencies are not guaranteed covered. Keep application advisory
+scanners configured as described above. The existing whole-template Python
+audit remains an additional moderate-or-higher baseline safeguard, even though
+the dependency-review rule applies to introduced vulnerabilities only.
 
 Recheck entitlement on repository transfers, visibility or plan changes.
 Keep the stable `Dependency policy` check required after verifying its actual

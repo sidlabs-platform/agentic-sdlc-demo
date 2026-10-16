@@ -34,7 +34,10 @@ jobs:
         if: vars.SDLC_REQUIRE_DEPENDENCY_REVIEW == 'true'
         uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4
         with:
-          fail-on-severity: moderate
+          fail-on-severity: low
+          fail-on-scopes: runtime, development, unknown
+          vulnerability-check: true
+          warn-only: false
           comment-summary-in-pr: never
       - name: Verify alternative dependency policy
         if: vars.SDLC_REQUIRE_DEPENDENCY_REVIEW == 'false'
