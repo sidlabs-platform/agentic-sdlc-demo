@@ -1,0 +1,43 @@
+name: Dependency Review
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-policy:
+    name: Dependency policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Require explicit dependency policy
+        env:
+          REQUIRED: ${{ vars.SDLC_REQUIRE_DEPENDENCY_REVIEW }}
+        run: |
+          case "$REQUIRED" in
+            true|false) ;;
+            *) echo "::error::Set SDLC_REQUIRE_DEPENDENCY_REVIEW to true (entitled) or false (documented alternative)."; exit 1 ;;
+          esac
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Audit pinned template Python dependencies
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/audit-template-deps.py
+      - name: Review introduced dependencies
+        if: vars.SDLC_REQUIRE_DEPENDENCY_REVIEW == 'true'
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: never
+      - name: Verify alternative dependency policy
+        if: vars.SDLC_REQUIRE_DEPENDENCY_REVIEW == 'false'
+        run: |
+          test -s docs/dependency-policy.md || { echo "::error::Document the entitlement limitation and alternative scanning policy in docs/dependency-policy.md"; exit 1; }
+          python3 scripts/toolchain.py --gate validate

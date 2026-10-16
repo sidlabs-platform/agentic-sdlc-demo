@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Security completion evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "findings"],
+  "properties": {
+    "version": {"const": 1},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "status", "description"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^SEC-[0-9]{3,}$"},
+          "severity": {"enum": ["critical", "high", "medium", "low", "info"]},
+          "status": {"enum": ["open", "fixed", "accepted"]},
+          "description": {"type": "string", "minLength": 1},
+          "acceptance_reason": {"type": "string", "minLength": 1},
+          "accepted_by": {"type": "string", "minLength": 1},
+          "decision_url": {"type": "string", "format": "uri"}
+        }
+      }
+    }
+  }
+}

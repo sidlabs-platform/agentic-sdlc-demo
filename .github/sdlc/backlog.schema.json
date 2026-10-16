@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dependency-ordered SDLC tasks",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "tasks"],
+  "properties": {
+    "version": {"const": 1},
+    "tasks": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 100,
+      "propertyNames": {"pattern": "^TASK-[0-9]{3,}$"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "type", "dependencies", "requirements", "acceptance_criteria"],
+        "properties": {
+          "title": {"type": "string", "minLength": 1, "maxLength": 150},
+          "type": {"enum": ["implementation", "frontend"]},
+          "dependencies": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^TASK-[0-9]{3,}$"}},
+          "requirements": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^BRD-(FR|NFR|INT)-[0-9]{3,}$"}},
+          "acceptance_criteria": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

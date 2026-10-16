@@ -1,0 +1,59 @@
+name: SDLC Controller
+
+on:
+  issues:
+    types: [opened, labeled, edited, reopened]
+  pull_request_target:
+    types: [opened, edited, synchronize, closed]
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        options: [reconcile, pause, resume]
+        default: reconcile
+      root_issue:
+        description: "Root issue number, required for pause/resume"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdlc-control-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  control:
+    environment: sdlc-control
+    if: >-
+      vars.SDLC_ENABLED == 'true' &&
+      (github.event_name != 'pull_request_target' ||
+       github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'workflow_dispatch' ||
+       github.ref_name == github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted controller only
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Reconcile pipeline
+        env:
+          SDLC_TOKEN: ${{ secrets.SDLC_TOKEN }}
+          SDLC_ENABLED: ${{ vars.SDLC_ENABLED }}
+          CONTROL_ACTION: ${{ inputs.action || 'reconcile' }}
+          ROOT_ISSUE: ${{ inputs.root_issue }}
+        run: |
+          if [ -n "$ROOT_ISSUE" ]; then
+            python scripts/controller.py --action "$CONTROL_ACTION" --root "$ROOT_ISSUE"
+          else
+            python scripts/controller.py --action "$CONTROL_ACTION"
+          fi

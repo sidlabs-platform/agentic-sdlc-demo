@@ -1,0 +1,47 @@
+name: Task proposal
+description: Propose a bounded task; controller-managed assignments use canonical backlog metadata.
+title: "Task proposal: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form does not dispatch an agent or bypass pipeline ordering.
+        Do not add sdlc:start to task issues. Managed assignments come from the
+        controller after verified prerequisite merges.
+  - type: input
+    id: task
+    attributes:
+      label: Task ID and backlog document
+      description: TASK- followed by at least three digits; link backlog/tasks/<ID>.md.
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - implementation
+        - frontend
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Root, requirements and design references
+      description: Root issue, BRD requirement IDs, parent story/epic and relevant HLD/LLD.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Prerequisite TASK IDs and reasons, matching manifest dependencies; use None if empty.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Scope, acceptance criteria and tests
+      description: Specify bounded changes, exclusions, measurable outcomes and validation commands.
+    validations:
+      required: true

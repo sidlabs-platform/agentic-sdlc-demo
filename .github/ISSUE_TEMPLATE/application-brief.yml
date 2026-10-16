@@ -1,0 +1,42 @@
+name: Application brief
+description: Describe a product for a writer-authorized SDLC pipeline.
+title: "Application brief: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include secrets or production data. A repository writer must add
+        sdlc:start after reviewing this brief. Additional briefs queue.
+  - type: textarea
+    id: vision
+    attributes:
+      label: Problem, users and desired outcomes
+      description: Describe the problem, personas, journeys and measurable success.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and acceptance criteria
+      description: Prioritize required capabilities and state exclusions and testable outcomes.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints and non-functional requirements
+      description: Include security, privacy, accessibility, performance, budget and timeline; say what is undecided.
+    validations:
+      required: true
+  - type: textarea
+    id: integrations
+    attributes:
+      label: Data, integrations and operating environment
+      description: Describe data ownership/retention, external contracts, hosting needs and existing technology constraints, or explicitly say none/undecided.
+    validations:
+      required: true
+  - type: textarea
+    id: decisions
+    attributes:
+      label: Open decisions and references
+      description: Link relevant non-secret context and identify who can resolve questions.

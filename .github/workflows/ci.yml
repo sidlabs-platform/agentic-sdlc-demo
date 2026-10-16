@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  template:
+    name: Template checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Validate template and run orchestration tests
+        run: |
+          python -m pip install --require-hashes -r scripts/requirements-checks.txt
+          python scripts/check.py
+          python -m unittest discover -s tests -v > "$RUNNER_TEMP/template-test-results.txt" 2>&1
+      - name: Report template tests
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/template-test-results.txt" ]; then
+            cat "$RUNNER_TEMP/template-test-results.txt"
+          fi
+      - name: Retain template test evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: template-test-results-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/template-test-results.txt
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Check GitHub Actions syntax
+        run: python scripts/validate-workflows.py
+  application-config:
+    name: Application configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      runner: ${{ steps.config.outputs.runner }}
+      test_report: ${{ steps.config.outputs.test_report }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - id: config
+        name: Validate application runner
+        run: |
+          python scripts/toolchain.py --gate validate
+          python -c "import json,os; c=json.load(open('.github/sdlc/toolchain.json')); f=open(os.environ['GITHUB_OUTPUT'],'a'); f.write('runner='+c['runner']+'\n'); f.write('test_report='+(c['test_report']['path'] if c['configured'] else '')+'\n')"
+  application:
+    name: Application checks
+    needs: application-config
+    if: always()
+    runs-on: ${{ needs.application-config.outputs.runner || 'ubuntu-latest' }}
+    timeout-minutes: 30
+    steps:
+      - name: Require valid application configuration
+        env:
+          CONFIG_RESULT: ${{ needs.application-config.result }}
+        shell: bash
+        run: test "$CONFIG_RESULT" = success
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Run application gates
+        shell: bash
+        run: |
+          python -m pip install --require-hashes -r scripts/requirements-runtime.txt
+          python scripts/toolchain.py --gate all > "$RUNNER_TEMP/application-check-results.txt" 2>&1
+      - name: Report application gates
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/application-check-results.txt" ]; then
+            cat "$RUNNER_TEMP/application-check-results.txt"
+          fi
+      - name: Retain application gate evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: application-check-results-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/application-check-results.txt
+            ${{ needs.application-config.outputs.test_report }}
+          if-no-files-found: warn
+          retention-days: 7

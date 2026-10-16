@@ -1,0 +1,28 @@
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Template Python tooling
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+test-results/
+
+# Local editors and operating systems
+.DS_Store
+.idea/
+*.swp
+*.swo
+
+# Bootstrap adds stack-specific build/cache rules. Do not ignore source,
+# lockfiles, generated backlog plans, or security evidence.

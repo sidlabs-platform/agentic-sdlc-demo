@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Application toolchain",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "configured", "languages", "source_roots", "runner", "commands", "not_applicable", "test_report"],
+  "properties": {
+    "version": {"const": 1},
+    "configured": {"type": "boolean"},
+    "languages": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "source_roots": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "runner": {"enum": ["ubuntu-latest", "windows-latest", "macos-latest"]},
+    "commands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["setup", "build", "lint", "typecheck", "test", "security"],
+      "properties": {
+        "setup": {"$ref": "#/$defs/commands"},
+        "build": {"$ref": "#/$defs/commands"},
+        "lint": {"$ref": "#/$defs/commands"},
+        "typecheck": {"$ref": "#/$defs/commands"},
+        "test": {"$ref": "#/$defs/commands"},
+        "security": {"$ref": "#/$defs/commands"}
+      }
+    },
+    "test_report": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "minimum_tests"],
+          "properties": {
+            "path": {"type": "string", "minLength": 1, "pattern": "\\.xml$"},
+            "minimum_tests": {"type": "integer", "minimum": 1}
+          }
+        }
+      ]
+    },
+    "not_applicable": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "build": {"type": "string", "minLength": 10},
+        "typecheck": {"type": "string", "minLength": 10}
+      }
+    }
+  },
+  "$defs": {
+    "commands": {
+      "type": "array",
+      "items": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+    }
+  }
+}

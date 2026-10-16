@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "configured": false,
+  "languages": [],
+  "source_roots": [],
+  "runner": "ubuntu-latest",
+  "commands": {
+    "setup": [],
+    "build": [],
+    "lint": [],
+    "typecheck": [],
+    "test": [],
+    "security": []
+  },
+  "not_applicable": {},
+  "test_report": null
+}

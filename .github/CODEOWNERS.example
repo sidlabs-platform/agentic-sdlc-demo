@@ -1,0 +1,7 @@
+# Inert example. Copy to .github/CODEOWNERS only after replacing placeholders
+# with real repository users/teams that have the necessary access.
+# Do not require requestor approval in a solo-maintainer policy.
+# * @REPLACE_WITH_MAINTAINER
+# /.github/ @REPLACE_WITH_WORKFLOW_REVIEWERS
+# /scripts/ @REPLACE_WITH_AUTOMATION_REVIEWERS
+# /docs/security/ @REPLACE_WITH_SECURITY_REVIEWERS
