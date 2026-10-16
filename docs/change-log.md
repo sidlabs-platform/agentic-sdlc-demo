@@ -9,3 +9,6 @@
 
 Append dated artifact and application changes here during stage assignments.
 This document is not controller state or proof that a stage PR merged.
+
+- 2026-10-16: Preserved root application brief #2 and drafted the traceable
+  Copilot Agentic AI Academy BRD in `docs/requirements/`.
