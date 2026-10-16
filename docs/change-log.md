@@ -12,3 +12,6 @@ This document is not controller state or proof that a stage PR merged.
 
 - 2026-10-16: Preserved root application brief #2 and drafted the traceable
   Copilot Agentic AI Academy BRD in `docs/requirements/`.
+- 2026-10-16: Documented the Checks and Commit statuses read permissions that
+  `SDLC_TOKEN` needs for controller CI verification (missing scopes caused 403
+  pauses that stopped stage advancement).

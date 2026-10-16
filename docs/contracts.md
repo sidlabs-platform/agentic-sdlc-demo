@@ -21,8 +21,9 @@ Changes must update all consumers and tests together.
 - Assignment uses `copilot-swe-agent[bot]` with
   `agent_assignment.custom_agent`. Agent identities are filenames without
   `.agent.md`; no fixed branches or textual agent-mention dispatch.
-- `SDLC_TOKEN` is a fine-grained **user** PAT with Metadata read and Actions,
-  Contents, Issues and Pull requests read/write for the target repository.
+- `SDLC_TOKEN` is a fine-grained **user** PAT with Metadata, Checks and Commit
+  statuses read, and Actions, Contents, Issues and Pull requests read/write
+  for the target repository.
   It is an environment secret in `sdlc-control`, restricted to the exact
   default branch with no tags, never a repository/organization secret. Both
   privileged jobs select this environment; no PR validation job does.

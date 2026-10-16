@@ -83,6 +83,7 @@ A replacement PR requires deliberate state migration, not label or title edits.
 | --- | --- |
 | No kickoff | Writer authority, start label, exact `SDLC_ENABLED=true`, Actions enabled, active/queued pipeline |
 | Assignment failed | PAT type/expiry/approval/repository scope, Copilot access, current API; issue creation is not assignment success |
+| Tracker blocked with `APIError: GitHub API 403` | `SDLC_TOKEN` lacks a documented permission (often Checks or Commit statuses read); update the PAT, then run the controller with `resume` for the root issue |
 | PR not linked | Actual closing-issue API reference from footer, bot author, repository and expected base; title or mention alone is insufficient |
 | Duplicate/missing event | Reconcile; allow persisted transition intent/resource recovery before creating replacements |
 | PR closed without merge | Blocked, not delivered; have a writer inspect and recover explicitly |

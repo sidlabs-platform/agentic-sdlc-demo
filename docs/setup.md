@@ -28,6 +28,11 @@ repository, with:
 | Contents | Read and write |
 | Issues | Read and write |
 | Pull requests | Read and write |
+| Checks | Read |
+| Commit statuses | Read |
+
+Checks and Commit statuses are required to verify current-head CI evidence;
+without them every reconcile pauses with `APIError: GitHub API 403: Forbidden`.
 
 Create an Actions environment named **`sdlc-control`**. Under its deployment
 branch/tag restrictions, choose **Selected branches and tags**, permit a
